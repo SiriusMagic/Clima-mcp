@@ -123,4 +123,11 @@
     <plurals name="minutes"><item quantity="one">hace %1$d min</item><item quantity="many">hace %1$d min</item><item quantity="other">hace %1$d min</item></plurals>
     <plurals name="hours"><item quantity="one">hace %1$d h</item><item quantity="many">hace %1$d h</item><item quantity="other">hace %1$d h</item></plurals>
     <plurals name="days"><item quantity="one">hace %1$d día</item><item quantity="many">hace %1$d días</item><item quantity="other">hace %1$d días</item></plurals>
+    <string name="icon_title">Icono de la app</string>
+    <string name="icon_original">Original</string>
+    <string name="icon_light">Claro</string>
+    <string name="icon_gold">Dorado</string>
+    <string name="icon_blue">Azul</string>
+    <string name="icon_green">Verde</string>
+    <string name="icon_hint">Cambia el icono de la pantalla de inicio. Algunos lanzadores tardan unos segundos en mostrarlo.</string>
 </resources>

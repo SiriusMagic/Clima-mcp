@@ -1,5 +1,7 @@
 package com.zirakusa.clima.ui.screens
 
+import com.zirakusa.clima.IconCard
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -57,6 +59,7 @@ import com.zirakusa.clima.ui.theme.ClimaColors
             }
             Item(stringResource(R.string.mcp_title), "$status · ${stringResource(R.string.mcp_settings_hint)}") { state.page = Page.MCP }
         }
+        IconCard(ClimaColors.Card, ClimaColors.Text, ClimaColors.Muted, ClimaColors.Accent, androidx.compose.ui.graphics.Color(0xFF2F80ED))
         ThemeCard(state.themeMode, state.accent, state::changeTheme, state::changeAccent)
         Caption(stringResource(R.string.about))
         Group {

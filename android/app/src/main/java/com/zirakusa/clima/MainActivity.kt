@@ -35,6 +35,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        AppIcon.load(this)
         enableEdgeToEdge()
         state = ClimaState(SharedValues(this), Net, launch = { block -> lifecycleScope.launch { block() } },
             language = resources.configuration.locales[0].language)
