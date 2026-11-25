@@ -1,8 +1,9 @@
 <resources>
-    <color name="launcher_background">#2F80ED</color>
-    <!-- The other launcher icons (Ajustes › Icono de la app). -->
-    <color name="launcher_background_light">#F2F2F2</color>
-    <color name="launcher_background_gold">#F5C518</color>
-    <color name="launcher_background_blue">#1565C0</color>
-    <color name="launcher_background_green">#1B5E20</color>
+    <!-- Launcher icon backgrounds (Ajustes › Icono de la app), the colour at each picture's edge. Nubes is the default. -->
+    <color name="launcher_background_clouds">#14AAFA</color>
+    <color name="launcher_background_moon">#023AA8</color>
+    <color name="launcher_background_storm">#065EBF</color>
+    <color name="launcher_background_rain">#08A0F6</color>
+    <color name="launcher_background_sun">#0CB2FC</color>
+    <color name="launcher_background_sunset">#3665C9</color>
 </resources>

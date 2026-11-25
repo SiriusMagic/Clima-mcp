@@ -123,10 +123,11 @@
     <plurals name="hours"><item quantity="one">%1$d h ago</item><item quantity="other">%1$d h ago</item></plurals>
     <plurals name="days"><item quantity="one">%1$d day ago</item><item quantity="other">%1$d days ago</item></plurals>
     <string name="icon_title">App icon</string>
-    <string name="icon_original">Original</string>
-    <string name="icon_light">Light</string>
-    <string name="icon_gold">Gold</string>
-    <string name="icon_blue">Blue</string>
-    <string name="icon_green">Green</string>
+    <string name="icon_moon">Moon</string>
+    <string name="icon_clouds">Clouds</string>
+    <string name="icon_storm">Storm</string>
+    <string name="icon_rain">Rain</string>
+    <string name="icon_sun">Sun</string>
+    <string name="icon_sunset">Sunset</string>
     <string name="icon_hint">Changes the home-screen icon. Some launchers take a few seconds to show it.</string>
 </resources>

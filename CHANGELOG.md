@@ -1,3 +1,9 @@
+# Clima 0.2.0
+
+- **Iconos nuevos**: seis cielos, Luna, **Nubes** (el de fábrica), Tormenta, Lluvia, Sol y Atardecer, en Ajustes › Icono
+  de la app (dos filas de tres). Se quitan los anteriores (Original, Claro, Dorado, Azul y Verde); si tenías uno elegido,
+  pasa solo al nuevo que ocupa su lugar.
+
 # Clima 0.1.1
 
 - **Conectar todas** (Gateway Hub 0.0.21): con un toque en el Hub se activa aquí «Redireccionar a Hub» y la app queda
