@@ -6,7 +6,6 @@ import com.zirakusa.clima.data.Places
 import com.zirakusa.clima.data.WeatherService
 import com.zirakusa.clima.mcp.Access
 import com.zirakusa.clima.mcp.HubLink
-import com.zirakusa.clima.mcp.Kind
 import com.zirakusa.clima.mcp.McpHandler
 import com.zirakusa.clima.mcp.Token
 import com.zirakusa.clima.mcp.WeatherData
@@ -20,7 +19,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
-/** Clima's MCP: tools list, good calls, bad arguments, not found, offline, read-only tokens, wrong and paused tokens, hub link. */
+/** Clima's MCP: tools list, good calls, bad arguments, not found, offline, read-only tokens, wrong tokens, hub link. */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34])
 class McpTest {
@@ -35,10 +34,9 @@ class McpTest {
         override fun add(city: City) = places.add(city)
         override fun remove(id: Long) = places.remove(id)
     }
-    private val writer = Token("w", "Claude", "cli_" + "w".repeat(40), Access.WRITE, Kind.HUB, "Clima")
-    private val reader = Token("r", "Lector", "cli_" + "r".repeat(40), Access.READ)
-    private val paused = Token("p", "Viejo", "cli_" + "p".repeat(40), Access.WRITE, paused = true)
-    private val handler = McpHandler({ listOf(writer, reader, paused) }, data, "0.1.0")
+    private val writer = Token("cli_" + "w".repeat(40), Access.WRITE)
+    private val reader = Token("cli_" + "r".repeat(40), Access.READ)
+    private val handler = McpHandler({ listOf(writer, reader) }, data, "0.1.0")
 
     private fun rpc(token: Token, method: String, params: JSONObject = JSONObject()) = runBlocking {
         JSONObject(handler.handle("POST", "/mcp", mapOf("Authorization" to "Bearer ${token.secret}"), emptyMap(),
@@ -57,7 +55,7 @@ class McpTest {
         assertEquals(listOf("weather_places", "weather_now", "weather_forecast", "weather_search"), names(reader))
         val init = rpc(writer, "initialize")
         assertEquals("clima", init.getJSONObject("serverInfo").getString("name"))
-        assertEquals("hub", init.getJSONObject("_meta").getJSONObject(McpHandler.TOKEN_META).getString("kind"))
+        assertEquals("redirect", init.getJSONObject("_meta").getJSONObject(McpHandler.TOKEN_META).getString("kind"))
     }
 
     @Test fun searchAddReadAndRemove() {
@@ -110,7 +108,7 @@ class McpTest {
 
     @Test fun wrongAndPausedTokensAndHubLink() = runBlocking {
         val body = """{"jsonrpc":"2.0","id":1,"method":"tools/list"}"""
-        assertEquals(401, handler.handle("POST", "/mcp", mapOf("Authorization" to "Bearer ${paused.secret}"), emptyMap(), body).status)
+        assertEquals(401, handler.handle("POST", "/mcp", mapOf("Authorization" to "Bearer wrong_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"), emptyMap(), body).status)
         assertEquals(401, handler.handle("POST", "/mcp", mapOf("Authorization" to "Bearer cli_wrong"), emptyMap(), body).status)
         assertEquals(401, handler.handle("POST", "/mcp", emptyMap(), emptyMap(), body).status)
         assertEquals(200, handler.handle("POST", "/mcp", emptyMap(), mapOf("token" to reader.secret), body).status)
@@ -118,25 +116,35 @@ class McpTest {
         assertTrue(Token.secret().startsWith("cli_"))
         assertEquals("NOT_SAME_DEVELOPER", HubLink.answer(false).getString("error"))
         assertEquals("REDIRECT_OFF", HubLink.answer(true).getString("error"))
-        // «Conectar todas» and Lucía's tools: only for the same developer, and tools only with «Redireccionar a Hub» on.
         assertEquals("NOT_SAME_DEVELOPER", HubLink.connect(false).getString("error"))
         assertEquals("NOT_SAME_DEVELOPER", HubLink.tool(false, "{}").getString("error"))
-        assertEquals("REDIRECT_OFF", HubLink.tool(true, "{}").getString("error"))
+        // Only the same developer (Arka) may connect, disconnect, read the status or run a tool.
+        listOf(HubLink.disconnect(false), HubLink.status(false)).forEach { assertEquals("NOT_SAME_DEVELOPER", it.getString("error")) }
     }
 
-    /** Lucía runs a tool on the phone through the same handler, only while «Redireccionar a Hub» is on. */
+    /** Lucía runs a tool on the phone through the same handler, with or without the public link; Arka turns that on and off. */
     @Test fun luciaRunsToolsOnThePhone() {
         val relay = com.zirakusa.clima.mcp.McpMode.relayUrl
         com.zirakusa.clima.mcp.McpMode.relayUrl = ""                                             // no relay in tests
         com.zirakusa.clima.mcp.McpMode.load(org.robolectric.RuntimeEnvironment.getApplication())
-        com.zirakusa.clima.mcp.McpMode.redirect(false)
-        assertEquals(null, com.zirakusa.clima.mcp.McpMode.local("{}"))
-        HubLink.connect(true); assertTrue(com.zirakusa.clima.mcp.McpMode.hubRedirect)                // «Conectar todas»
+        com.zirakusa.clima.mcp.McpMode.turnRemote(false)
         val list = JSONObject(com.zirakusa.clima.mcp.McpMode.local("""{"jsonrpc":"2.0","id":1,"method":"tools/list"}""")!!)
         assertTrue(list.getJSONObject("result").getJSONArray("tools").length() > 0)
         val viaProvider = JSONObject(HubLink.tool(true, """{"jsonrpc":"2.0","id":2,"method":"tools/list"}""").getString("response"))
         assertEquals(2, viaProvider.getInt("id"))
-        com.zirakusa.clima.mcp.McpMode.redirect(false)
+        assertEquals("BAD_REQUEST", HubLink.tool(true, "").getString("error"))
+        assertEquals("NOT_SAME_DEVELOPER", HubLink.tool(false, "{}").getString("error"))
+        assertTrue(HubLink.status(true).containsKey("remote"))
+        HubLink.connect(true); assertTrue(com.zirakusa.clima.mcp.McpMode.remote)                 // Arka › «Activar MCP»
+        assertFalse(HubLink.disconnect(true).getBoolean("remote")); assertFalse(com.zirakusa.clima.mcp.McpMode.remote)
         com.zirakusa.clima.mcp.McpMode.relayUrl = relay                                          // as the other tests expect
+    }
+
+    /** The hub's token from before Arka took over is kept, so the hub's link keeps working. */
+    @Test fun theOldHubTokenIsKept() {
+        val old = """[{"id":"a","secret":"${"l".repeat(44)}","kind":"llm"},{"id":"b","secret":"${"h".repeat(44)}","kind":"redirect"}]"""
+        assertEquals("h".repeat(44), com.zirakusa.clima.mcp.Legacy.redirectSecret(old))
+        assertEquals(null, com.zirakusa.clima.mcp.Legacy.redirectSecret("[]"))
+        assertEquals(null, com.zirakusa.clima.mcp.Legacy.redirectSecret(""))
     }
 }

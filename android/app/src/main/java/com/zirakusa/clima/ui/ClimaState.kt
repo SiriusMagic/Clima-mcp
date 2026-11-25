@@ -18,7 +18,7 @@ import com.zirakusa.clima.ui.theme.ThemeMode
 import java.io.IOException
 
 /** What covers the weather: nothing, «Lugares», Ajustes or Modo MCP. */
-enum class Page { MAIN, PLACES, SETTINGS, MCP }
+enum class Page { MAIN, PLACES, SETTINGS }
 
 /**
  * The only owner of Clima's state: the places, the one shown, each forecast (saved ones at once, new ones when old),

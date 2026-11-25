@@ -42,13 +42,13 @@ class MainActivity : ComponentActivity() {
         McpMode.onChanged = { state.reload() }
         McpMode.load(this)
         val actions = AppActions(location = ::askLocation, toast = { Toast.makeText(this, it, Toast.LENGTH_SHORT).show() },
-            copyLink = ::copyLink, goToHub = ::goToHub)
+            openArka = ::openArka)
         setContent {
             ClimaTheme(state.themeMode, state.accent) {
                 // The weather is always on a sky (white text); the other pages follow the theme.
                 val light = ClimaColors.isLight && state.page != Page.MAIN
                 SideEffect { WindowCompat.getInsetsController(window, window.decorView).run { isAppearanceLightStatusBars = light; isAppearanceLightNavigationBars = light } }
-                BackHandler(state.page != Page.MAIN) { state.page = if (state.page == Page.MCP) Page.SETTINGS else Page.MAIN }
+                BackHandler(state.page != Page.MAIN) { state.page = Page.MAIN }
                 ClimaApp(state, actions)
             }
         }
@@ -75,15 +75,10 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun copyLink(link: String) {
-        getSystemService(ClipboardManager::class.java)?.setPrimaryClip(ClipData.newPlainText("Clima MCP", link))
-        Toast.makeText(this, R.string.copied, Toast.LENGTH_SHORT).show()
-    }
 
-    /** «Ir al Hub»: copies the hub's link (in case it must be pasted) and opens the Gateway Hub app. */
-    private fun goToHub() {
-        getSystemService(ClipboardManager::class.java)?.setPrimaryClip(ClipData.newPlainText("Clima › Gateway Hub", McpMode.hubLink()))
+    /** «Modo MCP» in Ajustes: it is turned on, allowed on the phone and given tokens in Arka, so this opens Arka. */
+    private fun openArka() {
         val open = packageManager.getLaunchIntentForPackage("com.zirakusa.gatewayhub")
-        if (open != null) startActivity(open) else Toast.makeText(this, R.string.mcp_paste_in_hub, Toast.LENGTH_LONG).show()
+        if (open != null) startActivity(open) else Toast.makeText(this, R.string.mcp_no_arka, Toast.LENGTH_LONG).show()
     }
 }

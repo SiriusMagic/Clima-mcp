@@ -52,9 +52,6 @@ class ScreenshotsTest {
         state.page = Page.SETTINGS
         compose.onNodeWithText("Unidades").assertExists()
         shot("settings")
-        state.page = Page.MCP
-        compose.onNodeWithText("Activar MCP").assertExists()
-        shot("mcp")
     }
 
     @Test fun loadingAndOffline() {
