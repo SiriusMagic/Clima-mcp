@@ -30,7 +30,7 @@
     <string name="mcp_offline">Sin conexión</string>
     <string name="hub_link_permission">Vincular con Gateway Hub</string>
     <string name="mcp_status_off">Apagado</string>
-    <string name="mcp_settings_hint">Lo controla Arka: activarlo, permitirlo en local y crear tokens.</string>
+    <string name="mcp_settings_hint">Configura el acceso local y la redirección a Hub.</string>
     <string name="add_place">Añadir lugar</string>
     <string name="places">Lugares</string>
     <string name="saved_places">Tus lugares</string>

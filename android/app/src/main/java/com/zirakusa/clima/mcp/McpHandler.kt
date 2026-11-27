@@ -49,7 +49,7 @@ class McpHandler(private val tokens: () -> List<Token>, private val data: Weathe
                     "(weather_place_add, weather_place_remove). Metric units; times are local to each place. " +
                     "Errors carry a code (structuredContent.error.code).")
                 .put("_meta", JSONObject().put(TOKEN_META, JSONObject().put("name", token.name).put("kind", "redirect").put("mode", token.access.key)))
-            "ping" -> JSONObject()
+            "ping" -> McpProbeReceipt.accept(id)
             "tools/list" -> JSONObject().put("tools", JSONArray(WeatherTools.available(token.access).map {
                 JSONObject().put("name", it.name).put("description", it.description).put("inputSchema", it.schema)
                     .put("annotations", JSONObject().put("readOnlyHint", !it.write).put("destructiveHint", it.name == "weather_place_remove"))

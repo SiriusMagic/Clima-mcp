@@ -50,7 +50,7 @@ import com.zirakusa.clima.ui.theme.ClimaColors
         Group { SwitchItem(stringResource(R.string.here), stringResource(R.string.here_hint), state.hereOn) { on -> if (on) onLocation() else state.changeHere(false) } }
         Group {
             val status = when {
-                !McpMode.remote -> stringResource(R.string.mcp_status_off)
+                !McpMode.active -> stringResource(R.string.mcp_status_off)
                 McpMode.state == RelayLink.State.ONLINE -> stringResource(R.string.mcp_online)
                 McpMode.state == RelayLink.State.CONNECTING -> stringResource(R.string.mcp_connecting)
                 else -> stringResource(R.string.mcp_offline)

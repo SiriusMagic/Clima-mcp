@@ -18,6 +18,7 @@ import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import com.zirakusa.clima.data.SharedValues
 import com.zirakusa.clima.mcp.McpMode
+import com.zirakusa.clima.mcp.showMcpOptions
 import com.zirakusa.clima.ui.AppActions
 import com.zirakusa.clima.ui.ClimaApp
 import com.zirakusa.clima.ui.ClimaState
@@ -76,9 +77,5 @@ class MainActivity : ComponentActivity() {
     }
 
 
-    /** «Modo MCP» in Ajustes: it is turned on, allowed on the phone and given tokens in Arka, so this opens Arka. */
-    private fun openArka() {
-        val open = packageManager.getLaunchIntentForPackage("com.zirakusa.gatewayhub")
-        if (open != null) startActivity(open) else Toast.makeText(this, R.string.mcp_no_arka, Toast.LENGTH_LONG).show()
-    }
+    private fun openArka() = showMcpOptions(this)
 }
